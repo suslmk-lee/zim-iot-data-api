@@ -48,3 +48,7 @@ jobs:
       - name: Apply Kubernetes Deployment
         run: |
           kubectl apply -f deployment/deploy.yml
+
+      - name: Restart Kubernetes Deployment
+        run: |
+          kubectl rollout restart deployment/$DEPLOYMENT_NAME -n $NAMESPACE
