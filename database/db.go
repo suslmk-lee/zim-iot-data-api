@@ -22,6 +22,7 @@ func NewDB(cfg *config.Config, logger *logrus.Logger) (*DB, error) {
 	var connStr string
 	if cfg.Profile == "prod" {
 		if cfg.Database.Host == "" || cfg.Database.Name == "" || cfg.Database.User == "" || cfg.Database.Password == "" || cfg.Database.Port == "" {
+			fmt.Printf("one or more required environment variables are missing %v %v %v %v %v", cfg.Database.Host, cfg.Database.Name, cfg.Database.User, cfg.Database.Password, cfg.Database.Port)
 			return nil, fmt.Errorf("one or more required environment variables are missing")
 		}
 		connStr = fmt.Sprintf("host=%s dbname=%s user=%s password=%s port=%s sslmode=%s",
