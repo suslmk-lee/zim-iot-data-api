@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
         - name: zim-iot-data-api-container
-          image: 44ce789b-kr1-registry.container.nhncloud.com/container-platform-registry/zim-kafka-consumer:latest
+          image: 44ce789b-kr1-registry.container.nhncloud.com/container-platform-registry/zim-iot-data-api:latest
           ports:
             - containerPort: 8080
           env:
