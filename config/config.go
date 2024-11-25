@@ -26,6 +26,7 @@ type Config struct {
 // LoadConfig loads the configuration using Viper and conditionally from config.properties
 func LoadConfig() (*Config, error) {
 	profile := os.Getenv("PROFILE")
+	fmt.Println("profile: ", profile)
 	var config Config
 	config.Profile = profile
 
