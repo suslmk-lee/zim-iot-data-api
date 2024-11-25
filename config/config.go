@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -26,12 +27,16 @@ type Config struct {
 // LoadConfig loads the configuration using Viper and conditionally from config.properties
 func LoadConfig() (*Config, error) {
 	profile := os.Getenv("PROFILE")
-	fmt.Println("profile: ", profile)
+	fmt.Println("Profile:", profile)
 	var config Config
 	config.Profile = profile
 
 	// 자동으로 환경 변수 로드
 	viper.AutomaticEnv()
+
+	// 환경 변수의 '_'를 '.'으로 대체하여 Viper가 구조체 필드에 매핑할 수 있도록 함
+	replacer := strings.NewReplacer(".", "_")
+	viper.SetEnvKeyReplacer(replacer)
 
 	if profile != "prod" {
 		// 비프로덕션 환경에서는 config.properties 파일을 로드
@@ -56,6 +61,13 @@ func LoadConfig() (*Config, error) {
 	// 기본 SSLMode 설정
 	if config.Database.SSLMode == "" {
 		config.Database.SSLMode = "disable"
+	}
+
+	// 필요한 환경 변수 검증
+	if config.Database.Host == "" || config.Database.Name == "" || config.Database.User == "" || config.Database.Password == "" || config.Database.Port == "" {
+		fmt.Printf("One or more required environment variables are missing: Host=%s, Name=%s, User=%s, Password=%s, Port=%s\n",
+			config.Database.Host, config.Database.Name, config.Database.User, config.Database.Password, config.Database.Port)
+		return nil, fmt.Errorf("one or more required environment variables are missing")
 	}
 
 	return &config, nil
