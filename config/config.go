@@ -38,6 +38,8 @@ func LoadConfig() (*Config, error) {
 	replacer := strings.NewReplacer(".", "_")
 	viper.SetEnvKeyReplacer(replacer)
 
+	fmt.Println("Host 1", config.Database.Host)
+
 	if profile != "prod" {
 		// 비프로덕션 환경에서는 config.properties 파일을 로드
 		viper.SetConfigName("config")
@@ -48,10 +50,14 @@ func LoadConfig() (*Config, error) {
 		}
 	}
 
+	fmt.Println("Host 2", config.Database.Host)
+
 	err := viper.Unmarshal(&config)
 	if err != nil {
 		return nil, fmt.Errorf("unable to decode config into struct: %w", err)
 	}
+
+	fmt.Println("Host 3", config.Database.Host)
 
 	// 기본 서버 포트 설정
 	if config.Server.Port == "" {
