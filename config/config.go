@@ -10,24 +10,24 @@ import (
 
 // Config holds the configuration values
 type Config struct {
-	Profile  string
+	Profile  string `mapstructure:"PROFILE"`
 	Database struct {
-		Host     string
-		Name     string
-		User     string
-		Password string
-		Port     string
-		SSLMode  string
-	}
+		Host     string `mapstructure:"HOST"`
+		Name     string `mapstructure:"NAME"`
+		User     string `mapstructure:"USER"`
+		Password string `mapstructure:"PASSWORD"`
+		Port     string `mapstructure:"PORT"`
+		SSLMode  string `mapstructure:"SSLMODE"`
+	} `mapstructure:"DATABASE"`
 	Server struct {
-		Port string
-	}
+		Port string `mapstructure:"PORT"`
+	} `mapstructure:"SERVER"`
 }
 
 // LoadConfig loads the configuration using Viper and conditionally from config.properties
 func LoadConfig() (*Config, error) {
 	profile := os.Getenv("PROFILE")
-	fmt.Println("Profile:", profile)
+	fmt.Println("Profile:", profile) // 디버그 로그 추가
 	var config Config
 	config.Profile = profile
 
@@ -35,10 +35,10 @@ func LoadConfig() (*Config, error) {
 	viper.AutomaticEnv()
 
 	// 환경 변수의 '_'를 '.'으로 대체하여 Viper가 구조체 필드에 매핑할 수 있도록 함
-	replacer := strings.NewReplacer(".", "_")
+	replacer := strings.NewReplacer("_", ".")
 	viper.SetEnvKeyReplacer(replacer)
 
-	fmt.Println("Host 1", config.Database.Host)
+	fmt.Println("Host 1:", config.Database.Host) // 디버그 로그
 
 	if profile != "prod" {
 		// 비프로덕션 환경에서는 config.properties 파일을 로드
@@ -50,14 +50,15 @@ func LoadConfig() (*Config, error) {
 		}
 	}
 
-	fmt.Println("Host 2", config.Database.Host)
+	fmt.Println("Host 2:", config.Database.Host) // 디버그 로그
 
 	err := viper.Unmarshal(&config)
 	if err != nil {
 		return nil, fmt.Errorf("unable to decode config into struct: %w", err)
 	}
 
-	fmt.Println("Host 3", config.Database.Host)
+	fmt.Println("Host 3:", config.Database.Host) // 디버그 로그
+	fmt.Printf("Loaded Config: %+v\n", config)   // 추가 디버그 로그
 
 	// 기본 서버 포트 설정
 	if config.Server.Port == "" {
