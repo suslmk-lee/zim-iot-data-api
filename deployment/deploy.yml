@@ -11,7 +11,7 @@ metadata:
   namespace: iot-edge
 data:
   PROFILE: "prod"
-  DATABASE_HOST: "postgresql-cp.iot-db"
+  DATABASE_HOST: "postgres.postgres-postgresql"
   DATABASE_NAME: "cp-db"
   DATABASE_PORT: "5432"
 
