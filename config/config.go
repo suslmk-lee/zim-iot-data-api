@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/go-ini/ini"
 	"github.com/spf13/viper"
 )
 
@@ -23,54 +23,39 @@ type Config struct {
 	}
 }
 
-// LoadConfig loads the configuration using Viper
+// LoadConfig loads the configuration using Viper and conditionally from config.properties
 func LoadConfig() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("properties")
-	viper.AddConfigPath(".")
+	profile := os.Getenv("PROFILE")
+	var config Config
+	config.Profile = profile
+
+	// 자동으로 환경 변수 로드
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
+	if profile != "prod" {
+		// 비프로덕션 환경에서는 config.properties 파일을 로드
+		viper.SetConfigName("config")
+		viper.SetConfigType("properties")
+		viper.AddConfigPath(".")
+		if err := viper.ReadInConfig(); err != nil {
+			return nil, fmt.Errorf("failed to read config file: %w", err)
+		}
 	}
 
-	var config Config
 	err := viper.Unmarshal(&config)
 	if err != nil {
 		return nil, fmt.Errorf("unable to decode config into struct: %w", err)
 	}
 
-	// Set default server port if not set
+	// 기본 서버 포트 설정
 	if config.Server.Port == "" {
 		config.Server.Port = "8080"
 	}
 
-	// Set default SSLMode if not set
+	// 기본 SSLMode 설정
 	if config.Database.SSLMode == "" {
 		config.Database.SSLMode = "disable"
 	}
 
 	return &config, nil
-}
-
-// LoadConfigFromIni loads configuration from config.properties for non-production
-func LoadConfigFromIni(cfg *Config) error {
-	iniFile, err := ini.Load("config.properties")
-	if err != nil {
-		return fmt.Errorf("failed to read config.properties: %w", err)
-	}
-
-	dbSection := iniFile.Section("database")
-	cfg.Database.Host = dbSection.Key("DATABASE_HOST").String()
-	cfg.Database.Name = dbSection.Key("DATABASE_NAME").String()
-	cfg.Database.User = dbSection.Key("DATABASE_USER").String()
-	cfg.Database.Password = dbSection.Key("DATABASE_PASSWORD").String()
-	cfg.Database.Port = dbSection.Key("DATABASE_PORT").String()
-
-	// Additional validation
-	if cfg.Database.Host == "" || cfg.Database.Name == "" || cfg.Database.User == "" || cfg.Database.Password == "" || cfg.Database.Port == "" {
-		return fmt.Errorf("one or more required configuration values are missing in config.properties")
-	}
-
-	return nil
 }
