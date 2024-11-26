@@ -12,8 +12,8 @@ import (
 type Config struct {
 	Profile  string `mapstructure:"PROFILE"`
 	Database struct {
-		Host     string `mapstructure:"HOST"`
-		Name     string `mapstructure:"NAME"`
+		Host     string
+		Name     string
 		User     string `mapstructure:"USER"`
 		Password string `mapstructure:"PASSWORD"`
 		Port     string `mapstructure:"PORT"`
@@ -26,7 +26,7 @@ type Config struct {
 
 func LoadConfig() (*Config, error) {
 	profile := os.Getenv("PROFILE")
-	fmt.Println("Profile:", profile) // 디버그 로그 추가
+	fmt.Println("Profile:", profile)
 	var config Config
 	config.Profile = profile
 
@@ -43,15 +43,11 @@ func LoadConfig() (*Config, error) {
 		fmt.Println("Host 1:", config.Database.Host) // 디버그 로그
 
 	} else {
-		// 비프로덕션 환경: Viper 사용
-		// 자동으로 환경 변수 로드
 		viper.AutomaticEnv()
 
-		// 환경 변수의 '_'를 '.'으로 대체하여 Viper가 구조체 필드에 매핑할 수 있도록 함
 		replacer := strings.NewReplacer("_", ".")
 		viper.SetEnvKeyReplacer(replacer)
 
-		// 비프로덕션 환경에서는 config.properties 파일을 로드
 		viper.SetConfigName("config")
 		viper.SetConfigType("properties")
 		viper.AddConfigPath(".")
@@ -63,24 +59,16 @@ func LoadConfig() (*Config, error) {
 		if err != nil {
 			return nil, fmt.Errorf("unable to decode config into struct: %w", err)
 		}
-
-		fmt.Println("Host 2:", config.Database.Host) // 디버그 로그
 	}
 
-	fmt.Println("Host 3:", config.Database.Host) // 디버그 로그
-	fmt.Printf("Loaded Config: %+v\n", config)   // 추가 디버그 로그
-
-	// 기본 서버 포트 설정 (프로덕션과 비프로덕션 모두 적용)
 	if config.Server.Port == "" {
 		config.Server.Port = "8080"
 	}
 
-	// 기본 SSLMode 설정 (프로덕션과 비프로덕션 모두 적용)
 	if config.Database.SSLMode == "" {
 		config.Database.SSLMode = "disable"
 	}
 
-	// 필요한 환경 변수 검증 (프로덕션과 비프로덕션 모두 적용)
 	if config.Database.Host == "" || config.Database.Name == "" || config.Database.User == "" || config.Database.Password == "" || config.Database.Port == "" {
 		fmt.Printf("One or more required environment variables are missing: Host=%s, Name=%s, User=%s, Password=%s, Port=%s\n",
 			config.Database.Host, config.Database.Name, config.Database.User, config.Database.Password, config.Database.Port)
