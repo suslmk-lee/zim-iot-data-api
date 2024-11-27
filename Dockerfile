@@ -26,8 +26,6 @@ FROM scratch
 
 COPY --from=builder /dist/main .
 
-COPY --from=builder /dist/*.properties .
-
 ENV PROFILE=prod \
     DATABASE_HOST=${DATABASE_HOST} \
     DATABASE_NAME=${DATABASE_NAME} \
