@@ -7,6 +7,8 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  annotations:
+    strategy.spinnaker.io/versioned: "false"
   name: zim-iot-data-api-config
   namespace: iot-edge
 data:
@@ -30,6 +32,8 @@ type: kubernetes.io/dockerconfigjson
 apiVersion: v1
 kind: Secret
 metadata:
+  annotations:
+    strategy.spinnaker.io/versioned: "false"
   name: zim-iot-data-api-secret
   namespace: iot-edge
 type: Opaque
