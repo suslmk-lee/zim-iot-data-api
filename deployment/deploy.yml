@@ -57,6 +57,15 @@ spec:
       labels:
         app: zim-iot-data-api-app
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/node-role
+                    operator: NotIn
+                    values:
+                      - "edge"
       containers:
         - name: zim-iot-data-api-container
           image: 44ce789b-kr1-registry.container.nhncloud.com/container-platform-registry/zim-iot-data-api:latest
