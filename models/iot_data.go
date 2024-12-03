@@ -11,16 +11,16 @@ type IoTData struct {
 	TYield         float64 `json:"tyield"`
 	DYield         float64 `json:"dyield"`
 	PF             float64 `json:"pf"`
-	PMax           int     `json:"pmax"`
-	PAC            int     `json:"pac"`
-	SAC            int     `json:"sac"`
-	UAB            int     `json:"uab"`
-	UBC            int     `json:"ubc"`
-	UCA            int     `json:"uca"`
-	IA             int     `json:"ia"`
-	IB             int     `json:"ib"`
-	IC             int     `json:"ic"`
-	Freq           int     `json:"freq"`
+	PMax           float64 `json:"pmax"`
+	PAC            float64 `json:"pac"`
+	SAC            float64 `json:"sac"`
+	UAB            float64 `json:"uab"`
+	UBC            float64 `json:"ubc"`
+	UCA            float64 `json:"uca"`
+	IA             float64 `json:"ia"`
+	IB             float64 `json:"ib"`
+	IC             float64 `json:"ic"`
+	Freq           float64 `json:"freq"`
 	TMod           float64 `json:"tmod"`
 	TAmb           float64 `json:"tamb"`
 	Mode           string  `json:"mode"`
