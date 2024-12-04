@@ -29,16 +29,6 @@ func NewIoTHandlers(db *database.DB, logger *logrus.Logger) *IoTHandlers {
 
 // getIoTData handles the /iot-data endpoint
 func (h *IoTHandlers) GetIoTData(w http.ResponseWriter, r *http.Request) {
-	// Set CORS headers
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Accept")
-
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
 	ctx := r.Context()
 
 	// Input Validation for recent_count
@@ -88,16 +78,6 @@ func (h *IoTHandlers) GetIoTData(w http.ResponseWriter, r *http.Request) {
 
 // GetLatestIoTData handles the /iot-data/latest endpoint
 func (h *IoTHandlers) GetLatestIoTData(w http.ResponseWriter, r *http.Request) {
-	// Set CORS headers
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Accept")
-
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
 	ctx := r.Context()
 	query := `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
 			  FROM iot_data 
@@ -173,4 +153,24 @@ func (h *IoTHandlers) queryIoTData(ctx context.Context, query string, args ...in
 		data = append(data, d)
 	}
 	return data, nil
+}
+
+func (h *IoTHandlers) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Accept")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	switch r.URL.Path {
+	case "/iot-data":
+		h.GetIoTData(w, r)
+	case "/iot-data/latest":
+		h.GetLatestIoTData(w, r)
+	default:
+		http.Error(w, "Not Found", http.StatusNotFound)
+	}
 }

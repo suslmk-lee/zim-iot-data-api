@@ -9,7 +9,18 @@ spec:
   gateways:
   - cross-cluster-gateway
   http:
-  - route:
+  - corsPolicy:
+      allowOrigins:
+      - exact: "http://133.186.135.247"
+      allowMethods:
+      - GET
+      - POST
+      - OPTIONS
+      allowHeaders:
+      - Content-Type
+      - Accept
+      maxAge: "24h"
+    route:
     - destination:
         host: zim-iot-service.iot-edge.svc.cluster.local
         port:
