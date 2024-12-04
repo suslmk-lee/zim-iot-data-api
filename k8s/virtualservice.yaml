@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: zim-iot-vs
+  namespace: iot-edge
+spec:
+  hosts:
+  - "zim-iot-service.iot-edge.svc.cluster.local"
+  gateways:
+  - cross-cluster-gateway
+  http:
+  - route:
+    - destination:
+        host: zim-iot-service.iot-edge.svc.cluster.local
+        port:
+          number: 80
+      weight: 50
+    - destination:
+        host: zim-iot-service.iot-edge.svc.cluster.local
+        port:
+          number: 80
+      weight: 50

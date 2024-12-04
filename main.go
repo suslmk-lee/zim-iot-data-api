@@ -36,9 +36,12 @@ func main() {
 	mux.HandleFunc("/readiness", probes.ReadinessProbe)
 	mux.HandleFunc("/liveness", probes.LivenessProbe)
 
+	// Apply CORS middleware
+	handler := utils.CORSMiddleware(mux)
+
 	server := &http.Server{
 		Addr:    ":" + cfg.Server.Port,
-		Handler: mux,
+		Handler: handler,
 	}
 
 	go func() {

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zim-iot-service
+  namespace: iot-edge
+  labels:
+    app: zim-iot-service
+    cluster: kpaas-k2p
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: zim-iot-service
+      cluster: kpaas-k2p
+  template:
+    metadata:
+      labels:
+        app: zim-iot-service
+        cluster: kpaas-k2p
+    spec:
+      containers:
+      - name: zim-iot-service
+        image: your-registry/zim-iot-service:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

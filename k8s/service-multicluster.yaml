@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zim-iot-service
+  namespace: iot-edge
+  labels:
+    app: zim-iot-service
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: zim-iot-service
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zim-iot-service
+  namespace: iot-edge
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: zim-iot-multicluster
+  namespace: iot-edge
+spec:
+  hosts:
+  - "zim-iot-service.iot-edge.svc.cluster.local"
+  location: MESH_INTERNAL
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: DNS
+  addresses:
+  - 240.0.0.1
+  endpoints:
+  - address: kpaas-k2p-cluster     # 첫 번째 클러스터의 Istio ingress gateway 주소
+    ports:
+      http: 15443
+  - address: kpaas-cocktail-cluster  # 두 번째 클러스터의 Istio ingress gateway 주소
+    ports:
+      http: 15443
