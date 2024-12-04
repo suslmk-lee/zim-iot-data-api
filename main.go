@@ -31,17 +31,16 @@ func main() {
 	probes := handlers.NewProbes(db, logger)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/iot-data", iotHandlers.GetIoTData)
-	mux.HandleFunc("/iot-data/latest", iotHandlers.GetLatestIoTData)
-	mux.HandleFunc("/readiness", probes.ReadinessProbe)
-	mux.HandleFunc("/liveness", probes.LivenessProbe)
 
-	// Apply CORS middleware
-	handler := utils.CORSMiddleware(mux)
+	// 각 핸들러에 CORS 미들웨어 적용
+	mux.Handle("/iot-data", utils.CORSMiddleware(http.HandlerFunc(iotHandlers.GetIoTData)))
+	mux.Handle("/iot-data/latest", utils.CORSMiddleware(http.HandlerFunc(iotHandlers.GetLatestIoTData)))
+	mux.Handle("/readiness", utils.CORSMiddleware(http.HandlerFunc(probes.ReadinessProbe)))
+	mux.Handle("/liveness", utils.CORSMiddleware(http.HandlerFunc(probes.LivenessProbe)))
 
 	server := &http.Server{
 		Addr:    ":" + cfg.Server.Port,
-		Handler: handler,
+		Handler: mux,
 	}
 
 	go func() {
