@@ -56,12 +56,12 @@ func (h *IoTHandlers) GetIoTData(w http.ResponseWriter, r *http.Request) {
 		query = `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
 				FROM iot_data 
 				WHERE timestamp > $1
-				ORDER BY timestamp DESC`
+				ORDER BY timestamp ASC`
 		args = append(args, milliTime)
 	} else {
 		query = `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
 				FROM iot_data 
-				ORDER BY timestamp DESC 
+				ORDER BY timestamp ASC 
 				LIMIT $1`
 		args = append(args, recentCount)
 	}
@@ -86,7 +86,7 @@ func (h *IoTHandlers) GetLatestIoTData(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	query := `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
 			  FROM iot_data 
-			  ORDER BY timestamp DESC 
+			  ORDER BY timestamp ASC 
 			  LIMIT 1`
 	data, err := h.queryIoTData(ctx, query)
 	if err != nil {
