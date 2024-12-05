@@ -3,7 +3,7 @@ package models
 // IoTData represents the structure of IoT data
 type IoTData struct {
 	Device         string  `json:"device"`
-	Timestamp      string  `json:"timestamp"`
+	Timestamp      int64   `json:"timestamp"`      // UTC milliseconds
 	ProVer         int     `json:"pro_ver"`
 	MinorVer       int     `json:"minor_ver"`
 	SN             int64   `json:"sn"`
@@ -31,7 +31,7 @@ type IoTData struct {
 	PMaxLim        float64 `json:"pmax_lim"`
 	SMaxLim        float64 `json:"smax_lim"`
 	IsSent         bool    `json:"is_sent"`
-	RegTimestamp   string  `json:"reg_timestamp"`
+	RegTimestamp   string  `json:"reg_timestamp"`  // UTC milliseconds
 }
 
 // SingleIoTDataResponse represents the response structure for single IoT data
