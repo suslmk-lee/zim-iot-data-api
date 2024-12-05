@@ -55,7 +55,7 @@ func (h *IoTHandlers) GetIoTData(w http.ResponseWriter, r *http.Request) {
 	if milliTimeStr != "" {
 		query = `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
 				FROM iot_data 
-				WHERE timestamp >= $1
+				WHERE timestamp > $1
 				ORDER BY timestamp DESC`
 		args = append(args, milliTime)
 	} else {
