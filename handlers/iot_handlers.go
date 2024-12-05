@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
 	"zim-iot-data-api/database"
 	"zim-iot-data-api/models"
