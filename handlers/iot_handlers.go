@@ -37,35 +37,38 @@ func (h *IoTHandlers) GetIoTData(w http.ResponseWriter, r *http.Request) {
 		recentCount = 10
 	}
 
-	// Input Validation for milli-time
+	// 파라미터 없이 요청이 올 때 기본값 설정
+	if recentCountStr == "" {
+		recentCount = 10
+	}
+
+	// milli-time 파라미터 확인
 	milliTimeStr := r.URL.Query().Get("milli-time")
-	var milliTime int64
+	var query string
+	var args []interface{}
+
 	if milliTimeStr != "" {
-		milliTime, err = strconv.ParseInt(milliTimeStr, 10, 64)
+		milliTime, err := strconv.ParseInt(milliTimeStr, 10, 64)
 		if err != nil {
 			h.Logger.WithError(err).Error("Invalid milli-time parameter")
 			http.Error(w, "Invalid milli-time parameter", http.StatusBadRequest)
 			return
 		}
-	}
-
-	var query string
-	var args []interface{}
-
-	if milliTimeStr != "" {
 		query = `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
-				FROM iot_data 
-				WHERE timestamp > $1
-				ORDER BY timestamp ASC`
-		args = append(args, milliTime)
+					FROM iot_data 
+					WHERE timestamp > $1 
+					ORDER BY timestamp ASC 
+					LIMIT $2`
+		args = append(args, milliTime, recentCount)
 	} else {
 		query = `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
-				FROM iot_data 
-				ORDER BY timestamp ASC 
-				LIMIT $1`
+				  FROM iot_data 
+				  ORDER BY timestamp ASC 
+				  LIMIT $1`
 		args = append(args, recentCount)
 	}
 
+	// 데이터베이스 쿼리 실행
 	data, err := h.queryIoTData(ctx, query, args...)
 	if err != nil {
 		h.Logger.WithError(err).Error("Failed to query IoT data")
