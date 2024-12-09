@@ -61,10 +61,16 @@ func (h *IoTHandlers) GetIoTData(w http.ResponseWriter, r *http.Request) {
 					LIMIT $2`
 		args = append(args, milliTime, recentCount)
 	} else {
-		query = `SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
-				  FROM iot_data 
-				  ORDER BY timestamp ASC 
-				  LIMIT $1`
+		// 최신 데이터를 10건 뽑아 다시 ASC로 정렬
+		query = `WITH latest_data AS (
+			SELECT * 
+			FROM iot_data 
+			ORDER BY timestamp DESC 
+			LIMIT $1
+		)
+		SELECT device, timestamp, pro_ver, minor_ver, sn, model, tyield, dyield, pf, pmax, pac, sac, uab, ubc, uca, ia, ib, ic, freq, tmod, tamb, mode, qac, bus_capacitance, ac_capacitance, pdc, pmax_lim, smax_lim, is_sent, reg_timestamp 
+		FROM latest_data
+		ORDER BY timestamp ASC`
 		args = append(args, recentCount)
 	}
 
