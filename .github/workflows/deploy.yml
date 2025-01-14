@@ -45,7 +45,7 @@ jobs:
 
       - name: Scan Docker Image with Trivy
         env:
-          IMAGE_URI: $REGISTRY/$IMAGE_NAME:latest
+          IMAGE_URI: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.IMAGE_URI }}
